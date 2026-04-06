@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { registerCompany } from "../services/companies";
 
-/** Traduz textos genéricos que o Spring/HTTP costumam devolver em inglês. */
 function mensagemApiParaPortugues(texto: string): string {
   const t = texto.trim();
   const chave = t.toLowerCase();
@@ -22,7 +22,7 @@ function mensagemApiParaPortugues(texto: string): string {
   return mapa[chave] ?? t;
 }
 
-function mensagemPorStatusHttp(status: number): string | null {
+function mensagemPorStatusCadastro(status: number): string | null {
   switch (status) {
     case 400:
       return "Dados inválidos. Verifique os campos e tente novamente.";
@@ -53,7 +53,7 @@ function mensagemPorStatusHttp(status: number): string | null {
   }
 }
 
-function getErrorMessage(err: unknown): string {
+function getRegisterErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
     const status = err.response?.status;
     const data = err.response?.data as
@@ -84,14 +84,17 @@ function getErrorMessage(err: unknown): string {
     }
 
     if (typeof status === "number") {
-      const porStatus = mensagemPorStatusHttp(status);
+      const porStatus = mensagemPorStatusCadastro(status);
       if (porStatus) return porStatus;
     }
 
     if (err.code === "ERR_NETWORK" || err.message === "Network Error") {
       return "Não foi possível conectar ao servidor. Verifique sua internet e se o backend está no ar.";
     }
-    if (err.code === "ECONNABORTED" || err.message?.toLowerCase().includes("timeout")) {
+    if (
+      err.code === "ECONNABORTED" ||
+      err.message?.toLowerCase().includes("timeout")
+    ) {
       return "Tempo esgotado. Verifique sua conexão e tente novamente.";
     }
 
@@ -165,7 +168,7 @@ export default function Register() {
         acceptTerms: false,
       });
     } catch (err) {
-      setError(getErrorMessage(err));
+        setError(getRegisterErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -284,6 +287,16 @@ export default function Register() {
         >
           {isSubmitting ? "Enviando…" : "Concluir Cadastro"}
         </button>
+
+        <p className="text-center text-sm text-slate-600">
+          Já tem conta?{" "}
+          <Link
+            to="/login"
+            className="text-blue-600 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+          >
+            Entrar
+          </Link>
+        </p>
       </form>
     </div>
   );

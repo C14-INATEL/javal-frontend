@@ -1,10 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import type { UserConfig } from "vite";
+import type { InlineConfig } from "vitest";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  test: {
+    environment: "node",
+    include: ["test/**/*.test.ts"],
+  },
   server: {
     proxy: {
       "/api": {
@@ -13,4 +19,4 @@ export default defineConfig({
       },
     },
   },
-})
+} as UserConfig & { test: InlineConfig });

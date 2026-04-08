@@ -8,7 +8,10 @@ export type RegisterCompanyPayload = {
   password: string;
 };
 
-function toCompanyRegisterRequest(payload: RegisterCompanyPayload) {
+/** Mapeia o formulário para o JSON esperado pelo endpoint (função pura; testável sem HTTP). */
+export function buildCompanyRegisterRequest(
+  payload: RegisterCompanyPayload
+) {
   return {
     name: payload.companyName,
     email: payload.email,
@@ -23,7 +26,7 @@ export async function registerCompany(
 ): Promise<unknown> {
   const { data } = await api.post<unknown>(
     "/api/companies/register",
-    toCompanyRegisterRequest(payload)
+    buildCompanyRegisterRequest(payload)
   );
   return data;
 }

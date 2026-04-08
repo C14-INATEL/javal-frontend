@@ -9,6 +9,19 @@ Frontend da aplicação JAVAL desenvolvido utilizando **React**, **TypeScript** 
 - Vite
 - Node.js
 - npm
+- Vitest (testes unitários)
+
+## Testes
+
+O projeto usa **Vitest**. Os testes ficam na pasta `test/` e cobrem funções puras (validação de e-mail, senha, campos obrigatórios e mapeamento do payload de cadastro), sem navegador nem chamadas de rede.
+
+```bash
+# rodar todos os testes uma vez
+npm run test
+
+# modo observador (reexecuta ao salvar arquivos)
+npm run test:watch
+```
 
 ## Como executar o projeto
 
@@ -49,6 +62,8 @@ src/
   assets/
   App.tsx
   main.tsx
+test/
+  … arquivos *.test.ts
 ```
 
 ## Observações

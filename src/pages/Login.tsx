@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import AuthLayout, {
+  formButtonClass,
+  formInputClass,
+} from "../components/AuthLayout";
 
 const EyeOffIcon = () => (
   <svg
@@ -45,66 +49,73 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-blue-900 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-4"
-      >
-        <h1 className="text-center text-5xl font-extrabold tracking-widest text-slate-900">
-          JAVAL
-        </h1>
-
-        <h2 className="text-center text-lg text-slate-600">Entrar na conta</h2>
-
-        <input
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-
-        <div className="relative">
-          <input
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-          >
-            {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-          </button>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold hover:opacity-90 transition"
-        >
-          Entrar
-        </button>
-
+    <AuthLayout
+      title="Entrar na conta"
+      subtitle="Acesse o painel de gestão da sua indústria"
+      footer={
         <p className="text-center text-sm text-slate-600">
           Ainda não tem conta?{" "}
           <Link
             to="/register"
-            className="text-blue-600 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+            className="text-cyan-600 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded"
           >
             Cadastre sua empresa
           </Link>
         </p>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="text-sm font-medium text-slate-700">
+            E-mail
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="seu@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={formInputClass}
+            required
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label
+            htmlFor="password"
+            className="text-sm font-medium text-slate-700"
+          >
+            Senha
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${formInputClass} pr-12`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded"
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" className={formButtonClass}>
+          Entrar
+        </button>
       </form>
-    </div>
+    </AuthLayout>
   );
 }

@@ -7,6 +7,7 @@ describe("buildCompanyRegisterRequest", () => {
   it("mapeia o payload do formulário para o corpo da API sem chamar rede", () => {
     const body = buildCompanyRegisterRequest({
       companyName: "ACME Ltda",
+      cnpj: "11.444.777/0001-61",
       email: "contato@acme.com",
       phone: "  11 98888-7777  ",
       responsible: "Maria Silva",
@@ -15,6 +16,7 @@ describe("buildCompanyRegisterRequest", () => {
 
     expect(body).toEqual({
       name: "ACME Ltda",
+      cnpj: "11.444.777/0001-61",
       email: "contato@acme.com",
       phone: "11 98888-7777",
       responsibleName: "Maria Silva",
@@ -26,6 +28,7 @@ describe("buildCompanyRegisterRequest", () => {
 describe("registerCompany", () => {
   const payload = {
     companyName: "ACME Ltda",
+    cnpj: "11.444.777/0001-61",
     email: "contato@acme.com",
     phone: " 11 98888-7777 ",
     responsible: "Maria Silva",
@@ -45,6 +48,7 @@ describe("registerCompany", () => {
 
     expect(postSpy).toHaveBeenCalledWith("/api/companies/register", {
       name: "ACME Ltda",
+      cnpj: "11.444.777/0001-61",
       email: "contato@acme.com",
       phone: "11 98888-7777",
       responsibleName: "Maria Silva",

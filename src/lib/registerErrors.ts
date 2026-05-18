@@ -85,6 +85,10 @@ export function getRegisterErrorMessage(err: unknown): string {
       if (porStatus) return porStatus;
     }
 
+    if (status === 502 || status === 503) {
+      return "Não foi possível conectar ao backend. Verifique se o servidor está rodando em http://localhost:8080.";
+    }
+
     if (err.code === "ERR_NETWORK" || err.message === "Network Error") {
       return "Não foi possível conectar ao servidor. Verifique sua internet e se o backend está no ar.";
     }

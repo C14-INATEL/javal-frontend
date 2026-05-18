@@ -1,7 +1,9 @@
 import { api } from "../lib/api";
+import { formatCnpj } from "../lib/validation";
 
 export type RegisterCompanyPayload = {
   companyName: string;
+  cnpj: string;
   email: string;
   phone: string;
   responsible: string;
@@ -14,6 +16,7 @@ export function buildCompanyRegisterRequest(
 ) {
   return {
     name: payload.companyName,
+    cnpj: formatCnpj(payload.cnpj),
     email: payload.email,
     phone: payload.phone.trim(),
     responsibleName: payload.responsible,

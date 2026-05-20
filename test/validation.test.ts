@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  isValidCnpj,
   isValidEmail,
   isValidPassword,
+  formatCnpj,
+  normalizeCnpj,
   validateRequiredFields,
 } from "../src/lib/validation";
 
@@ -27,6 +30,28 @@ describe("isValidPassword", () => {
   it("retorna false quando a senha é mais curta que o mínimo", () => {
     expect(isValidPassword("curta", 8)).toBe(false);
     expect(isValidPassword("1234567", 8)).toBe(false);
+  });
+});
+
+describe("isValidCnpj", () => {
+  it("retorna true para CNPJ válido (com ou sem máscara)", () => {
+    expect(isValidCnpj("11.444.777/0001-61")).toBe(true);
+    expect(isValidCnpj("11444777000161")).toBe(true);
+  });
+
+  it("retorna false para CNPJ inválido", () => {
+    expect(isValidCnpj("11.111.111/1111-11")).toBe(false);
+    expect(isValidCnpj("123")).toBe(false);
+    expect(isValidCnpj("")).toBe(false);
+  });
+
+  it("normalizeCnpj remove caracteres não numéricos", () => {
+    expect(normalizeCnpj("11.444.777/0001-61")).toBe("11444777000161");
+  });
+
+  it("formatCnpj aplica máscara 00.000.000/0000-00", () => {
+    expect(formatCnpj("11444777000161")).toBe("11.444.777/0001-61");
+    expect(formatCnpj("11.444.777/0001-61")).toBe("11.444.777/0001-61");
   });
 });
 

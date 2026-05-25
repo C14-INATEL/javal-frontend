@@ -63,7 +63,7 @@ describe("listMachines", () => {
 
     const result = await listMachines();
 
-    expect(getSpy).toHaveBeenCalledWith("/api/machines");
+    expect(getSpy).toHaveBeenCalledWith("/maquinas");
     expect(result).toEqual(machines);
   });
 });
@@ -87,7 +87,7 @@ describe("createMachine", () => {
 
     const result = await createMachine(payload);
 
-    expect(postSpy).toHaveBeenCalledWith("/api/machines", {
+    expect(postSpy).toHaveBeenCalledWith("/maquinas", {
       nome: "Torno CNC 01",
       tipo: "CNC",
       capacidadePorHora: 120,

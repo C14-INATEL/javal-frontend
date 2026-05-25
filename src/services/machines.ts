@@ -60,8 +60,11 @@ export function buildMachineCreateRequest(payload: CreateMachinePayload) {
   };
 }
 
+/** Path relativo ao `baseURL` (dev: /api-backend → POST …/api-backend/maquinas). */
+const MAQUINAS_PATH = "/maquinas";
+
 export async function listMachines(): Promise<Machine[]> {
-  const { data } = await api.get<unknown>("/api/machines");
+  const { data } = await api.get<unknown>(MAQUINAS_PATH);
   return parseMachinesList(data);
 }
 
@@ -69,12 +72,12 @@ export async function createMachine(
   payload: CreateMachinePayload
 ): Promise<unknown> {
   const { data } = await api.post<unknown>(
-    "/api/machines",
+    MAQUINAS_PATH,
     buildMachineCreateRequest(payload)
   );
   return data;
 }
 
 export async function deleteMachine(id: number): Promise<void> {
-  await api.delete(`/api/machines/${id}`);
+  await api.delete(`${MAQUINAS_PATH}/${id}`);
 }

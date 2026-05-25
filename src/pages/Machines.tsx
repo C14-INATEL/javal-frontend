@@ -120,7 +120,7 @@ export default function Machines() {
           <input
             id="tipo"
             name="tipo"
-            placeholder="Ex.: CNC"
+            placeholder="Ex.: Torno CNC"
             value={form.tipo}
             onChange={handleChange}
             className={formInputClass}

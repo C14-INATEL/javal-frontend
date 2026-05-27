@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLayout, {
   formButtonClass,
   formInputClass,
@@ -9,6 +9,7 @@ import { isValidCnpj } from "../lib/validation";
 import { registerCompany } from "../services/companies";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     companyName: "",
     cnpj: "",
@@ -21,7 +22,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;
@@ -34,8 +34,6 @@ export default function Register() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
-
     if (!form.acceptTerms) {
       setError("É necessário aceitar os termos de uso para continuar.");
       return;
@@ -56,16 +54,7 @@ export default function Register() {
         responsible: form.responsible.trim(),
         password: form.password,
       });
-      setSuccess("Cadastro realizado com sucesso!");
-      setForm({
-        companyName: "",
-        cnpj: "",
-        email: "",
-        phone: "",
-        responsible: "",
-        password: "",
-        acceptTerms: false,
-      });
+      navigate("/login", { replace: true, state: { registered: true } });
     } catch (err) {
       setError(getRegisterErrorMessage(err));
     } finally {
@@ -99,15 +88,6 @@ export default function Register() {
             {error}
           </p>
         )}
-        {success && (
-          <p
-            className="rounded-xl bg-green-50 text-green-800 text-sm px-4 py-3 border border-green-200"
-            role="status"
-          >
-            {success}
-          </p>
-        )}
-
         <div className="space-y-1.5">
           <label
             htmlFor="companyName"
@@ -199,9 +179,10 @@ export default function Register() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Mínimo 8 caracteres"
+              placeholder="Mínimo 6 caracteres"
               onChange={handleChange}
               className={`${formInputClass} pr-12`}
+              minLength={6}
               required
             />
             <button

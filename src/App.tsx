@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import GuestRoute from "./components/GuestRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Machines from "./pages/Machines";
@@ -10,10 +12,38 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/machines" element={<MachinesList />} />
-        <Route path="/machines/new" element={<Machines />} />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/machines"
+          element={
+            <ProtectedRoute>
+              <MachinesList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/machines/new"
+          element={
+            <ProtectedRoute>
+              <Machines />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { buildCompanyRegisterRequest } from "../src/services/companies";
-import { registerCompany } from "../src/services/companies";
+import {
+  buildCompanyRegisterRequest,
+  loginCompany,
+  registerCompany,
+} from "../src/services/companies";
 import { api } from "../src/lib/api";
 
 describe("buildCompanyRegisterRequest", () => {
@@ -62,5 +65,32 @@ describe("registerCompany", () => {
     vi.spyOn(api, "post").mockRejectedValueOnce(httpError);
 
     await expect(registerCompany(payload)).rejects.toThrow("Falha de rede");
+  });
+});
+
+describe("loginCompany", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("envia e-mail e senha para o endpoint de login e retorna a sessão (mock)", async () => {
+    const session = {
+      token: "jwt-abc",
+      companyId: 1,
+      companyName: "ACME Ltda",
+      email: "contato@acme.com",
+    };
+    const postSpy = vi.spyOn(api, "post").mockResolvedValueOnce({ data: session });
+
+    const result = await loginCompany({
+      email: "  contato@acme.com  ",
+      password: "senha-segura",
+    });
+
+    expect(postSpy).toHaveBeenCalledWith("/api/companies/login", {
+      email: "contato@acme.com",
+      password: "senha-segura",
+    });
+    expect(result).toEqual(session);
   });
 });

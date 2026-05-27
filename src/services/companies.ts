@@ -1,5 +1,11 @@
 import { api } from "../lib/api";
+import type { AuthSession } from "../lib/auth";
 import { formatCnpj } from "../lib/validation";
+
+export type LoginCompanyPayload = {
+  email: string;
+  password: string;
+};
 
 export type RegisterCompanyPayload = {
   companyName: string;
@@ -31,5 +37,15 @@ export async function registerCompany(
     "/api/companies/register",
     buildCompanyRegisterRequest(payload)
   );
+  return data;
+}
+
+export async function loginCompany(
+  payload: LoginCompanyPayload
+): Promise<AuthSession> {
+  const { data } = await api.post<AuthSession>("/api/companies/login", {
+    email: payload.email.trim(),
+    password: payload.password,
+  });
   return data;
 }

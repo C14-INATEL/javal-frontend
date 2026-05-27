@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import conveyorImg from "../assets/conveyor.png";
+import { clearAuthSession, getAuthCompany } from "../lib/auth";
 
 type AppLayoutProps = {
   category?: string;
@@ -17,6 +18,14 @@ export default function AppLayout({
   action,
   children,
 }: AppLayoutProps) {
+  const navigate = useNavigate();
+  const company = getAuthCompany();
+
+  function handleLogout() {
+    clearAuthSession();
+    navigate("/login", { replace: true });
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div
@@ -44,6 +53,23 @@ export default function AppLayout({
               JAVAL
             </span>
           </Link>
+          <div className="flex items-center gap-4">
+            {company && (
+              <p className="hidden sm:block text-sm text-slate-400 truncate max-w-[200px]">
+                <span className="text-slate-500">Empresa: </span>
+                <span className="text-slate-200 font-medium">
+                  {company.companyName}
+                </span>
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-white/15 hover:border-white/30 transition focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              Sair
+            </button>
+          </div>
         </div>
       </header>
 

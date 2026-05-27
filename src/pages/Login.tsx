@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthLayout, {
   formButtonClass,
   formInputClass,
 } from "../components/AuthLayout";
+import { getLoginErrorMessage } from "../lib/registerErrors";
+import { saveAuthSession } from "../lib/auth";
+import { loginCompany } from "../services/companies";
 
 const EyeOffIcon = () => (
   <svg
@@ -39,13 +42,45 @@ const EyeIcon = () => (
   </svg>
 );
 
+type LoginLocationState = {
+  from?: { pathname?: string };
+  registered?: boolean;
+};
+
 export default function Login() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state as LoginLocationState | null;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  const registeredMessage = locationState?.registered
+    ? "Cadastro concluído. Faça login com seu e-mail e senha."
+    : null;
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const session = await loginCompany({ email, password });
+      saveAuthSession(session);
+      const redirectTo =
+        locationState?.from?.pathname &&
+        locationState.from.pathname !== "/login"
+          ? locationState.from.pathname
+          : "/machines";
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      setError(getLoginErrorMessage(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -65,6 +100,23 @@ export default function Login() {
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        {registeredMessage && (
+          <p
+            className="rounded-xl bg-green-50 text-green-800 text-sm px-4 py-3 border border-green-200"
+            role="status"
+          >
+            {registeredMessage}
+          </p>
+        )}
+        {error && (
+          <p
+            className="rounded-xl bg-red-50 text-red-700 text-sm px-4 py-3 border border-red-200"
+            role="alert"
+          >
+            {error}
+          </p>
+        )}
+
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium text-slate-700">
             E-mail
@@ -99,6 +151,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={`${formInputClass} pr-12`}
+              minLength={6}
               required
             />
             <button
@@ -112,8 +165,12 @@ export default function Login() {
           </div>
         </div>
 
-        <button type="submit" className={formButtonClass}>
-          Entrar
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={formButtonClass}
+        >
+          {isSubmitting ? "Entrando…" : "Entrar"}
         </button>
       </form>
     </AuthLayout>

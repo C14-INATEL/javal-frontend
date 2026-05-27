@@ -50,6 +50,13 @@ export function mensagemPorStatusCadastro(status: number): string | null {
   }
 }
 
+export function getLoginErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err) && err.response?.status === 401) {
+    return "E-mail ou senha incorretos.";
+  }
+  return getRegisterErrorMessage(err);
+}
+
 export function getRegisterErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
     const status = err.response?.status;

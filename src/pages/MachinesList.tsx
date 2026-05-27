@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
+import ConfirmDialog from "../components/ConfirmDialog";
 import MachineStatusBadge from "../components/MachineStatusBadge";
 import conveyorImg from "../assets/conveyor.png";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
@@ -80,7 +81,8 @@ export default function MachinesList() {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [machineToDelete, setMachineToDelete] = useState<Machine | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
   const [editStatus, setEditStatus] = useState<MachineStatus>("ATIVA");
   const [isSavingEdit, setIsSavingEdit] = useState(false);
@@ -154,21 +156,28 @@ export default function MachinesList() {
     }
   }
 
-  async function handleDelete(machine: Machine) {
-    const confirmed = window.confirm(
-      `Excluir a máquina "${machine.nome}"? Esta ação não pode ser desfeita.`
-    );
-    if (!confirmed) return;
+  function openDelete(machine: Machine) {
+    setMachineToDelete(machine);
+  }
 
-    setDeletingId(machine.id);
+  function closeDelete() {
+    if (isDeleting) return;
+    setMachineToDelete(null);
+  }
+
+  async function confirmDelete() {
+    if (!machineToDelete) return;
+
+    setIsDeleting(true);
     setError(null);
     try {
-      await deleteMachine(machine.id);
-      setMachines((prev) => prev.filter((m) => m.id !== machine.id));
+      await deleteMachine(machineToDelete.id);
+      setMachines((prev) => prev.filter((m) => m.id !== machineToDelete.id));
+      setMachineToDelete(null);
     } catch (err) {
       setError(getRegisterErrorMessage(err));
     } finally {
-      setDeletingId(null);
+      setIsDeleting(false);
     }
   }
 
@@ -329,11 +338,13 @@ export default function MachinesList() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDelete(machine)}
-                          disabled={deletingId === machine.id}
+                          onClick={() => openDelete(machine)}
+                          disabled={
+                            isDeleting && machineToDelete?.id === machine.id
+                          }
                           className="px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/25 hover:bg-red-500/20 transition disabled:opacity-50"
                         >
-                          {deletingId === machine.id
+                          {isDeleting && machineToDelete?.id === machine.id
                             ? "Excluindo…"
                             : "Excluir"}
                         </button>
@@ -346,6 +357,17 @@ export default function MachinesList() {
           </div>
         )}
       </section>
+
+      <ConfirmDialog
+        open={machineToDelete !== null}
+        title="Excluir máquina?"
+        highlight={machineToDelete?.nome}
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        isLoading={isDeleting}
+        onConfirm={confirmDelete}
+        onCancel={closeDelete}
+      />
 
       {editingMachine && (
         <div

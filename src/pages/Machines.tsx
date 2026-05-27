@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLayout, {
   formButtonClass,
   formInputClass,
@@ -11,6 +12,7 @@ import {
 } from "../services/machines";
 
 export default function Machines() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: "",
     tipo: "",
@@ -48,6 +50,7 @@ export default function Machines() {
         status: form.status,
       });
       setSuccess("Máquina cadastrada com sucesso!");
+      setTimeout(() => navigate("/machines"), 1200);
       setForm({
         nome: "",
         tipo: "",
@@ -66,6 +69,16 @@ export default function Machines() {
       wide
       title="Cadastro de Máquina"
       subtitle="Registre equipamentos e acompanhe a capacidade de produção"
+      footer={
+        <p className="text-center text-sm text-slate-600">
+          <Link
+            to="/machines"
+            className="text-cyan-600 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded"
+          >
+            ← Voltar para a lista
+          </Link>
+        </p>
+      }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -107,7 +120,7 @@ export default function Machines() {
           <input
             id="tipo"
             name="tipo"
-            placeholder="Ex.: CNC"
+            placeholder="Ex.: Torno CNC"
             value={form.tipo}
             onChange={handleChange}
             className={formInputClass}

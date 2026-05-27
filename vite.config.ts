@@ -13,10 +13,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // Repassa o path completo (ex.: /api-backend/maquinas → mesmo path no Tomcat)
       "/api-backend": {
         target: "http://localhost:8080",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-backend/, ""),
       },
     },
   },

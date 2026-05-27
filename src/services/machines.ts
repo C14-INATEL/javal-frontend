@@ -2,6 +2,14 @@ import { api } from "../lib/api";
 
 export type MachineStatus = "ATIVA" | "INATIVA" | "MANUTENCAO";
 
+export type Machine = {
+  id: number;
+  nome: string;
+  tipo: string;
+  capacidadePorHora: number;
+  status: MachineStatus;
+};
+
 export type CreateMachinePayload = {
   nome: string;
   tipo: string;
@@ -18,6 +26,30 @@ export const MACHINE_STATUS_OPTIONS: {
   { value: "MANUTENCAO", label: "Manutenção" },
 ];
 
+const STATUS_LABELS: Record<MachineStatus, string> = {
+  ATIVA: "Ativa",
+  INATIVA: "Inativa",
+  MANUTENCAO: "Manutenção",
+};
+
+export function getMachineStatusLabel(status: MachineStatus): string {
+  return STATUS_LABELS[status];
+}
+
+/** Normaliza resposta da API (array direto ou página com `content`). */
+export function parseMachinesList(data: unknown): Machine[] {
+  if (Array.isArray(data)) return data as Machine[];
+  if (
+    data &&
+    typeof data === "object" &&
+    "content" in data &&
+    Array.isArray((data as { content: unknown }).content)
+  ) {
+    return (data as { content: Machine[] }).content;
+  }
+  return [];
+}
+
 /** Mapeia o formulário para o JSON esperado pelo endpoint (função pura; testável sem HTTP). */
 export function buildMachineCreateRequest(payload: CreateMachinePayload) {
   return {
@@ -28,12 +60,24 @@ export function buildMachineCreateRequest(payload: CreateMachinePayload) {
   };
 }
 
+/** Path relativo ao `baseURL` (dev: /api-backend → POST …/api-backend/maquinas). */
+const MAQUINAS_PATH = "/maquinas";
+
+export async function listMachines(): Promise<Machine[]> {
+  const { data } = await api.get<unknown>(MAQUINAS_PATH);
+  return parseMachinesList(data);
+}
+
 export async function createMachine(
   payload: CreateMachinePayload
 ): Promise<unknown> {
   const { data } = await api.post<unknown>(
-    "/api/machines",
+    MAQUINAS_PATH,
     buildMachineCreateRequest(payload)
   );
   return data;
+}
+
+export async function deleteMachine(id: number): Promise<void> {
+  await api.delete(`${MAQUINAS_PATH}/${id}`);
 }

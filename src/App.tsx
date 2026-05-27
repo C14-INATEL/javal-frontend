@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Machines from "./pages/Machines";
+import MachinesList from "./pages/MachinesList";
 import "./App.css";
 
 function App() {
@@ -11,7 +12,8 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/machines" element={<Machines />} />
+        <Route path="/machines" element={<MachinesList />} />
+        <Route path="/machines/new" element={<Machines />} />
       </Routes>
     </BrowserRouter>
   );

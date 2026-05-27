@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildMachineCreateRequest,
   createMachine,
+  listMachines,
+  parseMachinesList,
 } from "../src/services/machines";
 import { api } from "../src/lib/api";
 
@@ -20,6 +22,49 @@ describe("buildMachineCreateRequest", () => {
       capacidadePorHora: 120,
       status: "ATIVA",
     });
+  });
+});
+
+describe("parseMachinesList", () => {
+  it("aceita array direto ou objeto paginado com content", () => {
+    const machines = [
+      {
+        id: 1,
+        nome: "Torno CNC 01",
+        tipo: "CNC",
+        capacidadePorHora: 120,
+        status: "ATIVA" as const,
+      },
+    ];
+    expect(parseMachinesList(machines)).toEqual(machines);
+    expect(parseMachinesList({ content: machines })).toEqual(machines);
+    expect(parseMachinesList({})).toEqual([]);
+  });
+});
+
+describe("listMachines", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("busca máquinas na API e normaliza a resposta (mock)", async () => {
+    const machines = [
+      {
+        id: 1,
+        nome: "Torno CNC 01",
+        tipo: "CNC",
+        capacidadePorHora: 120,
+        status: "ATIVA",
+      },
+    ];
+    const getSpy = vi
+      .spyOn(api, "get")
+      .mockResolvedValueOnce({ data: machines });
+
+    const result = await listMachines();
+
+    expect(getSpy).toHaveBeenCalledWith("/maquinas");
+    expect(result).toEqual(machines);
   });
 });
 
@@ -42,7 +87,7 @@ describe("createMachine", () => {
 
     const result = await createMachine(payload);
 
-    expect(postSpy).toHaveBeenCalledWith("/api/machines", {
+    expect(postSpy).toHaveBeenCalledWith("/maquinas", {
       nome: "Torno CNC 01",
       tipo: "CNC",
       capacidadePorHora: 120,

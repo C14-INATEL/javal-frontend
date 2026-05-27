@@ -10,7 +10,9 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("authToken");
+  const stored = localStorage.getItem("authToken")?.trim();
+  const fromEnv = String(import.meta.env.VITE_AUTH_TOKEN ?? "").trim();
+  const token = stored || fromEnv;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

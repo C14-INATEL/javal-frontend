@@ -6,10 +6,12 @@ import {
   parseMachinesList,
 } from "../src/services/machines";
 import { api } from "../src/lib/api";
+import * as auth from "../src/lib/auth";
 
 describe("buildMachineCreateRequest", () => {
   it("mapeia o payload do formulário para o corpo da API sem chamar rede", () => {
     const body = buildMachineCreateRequest({
+      companyId: 7,
       nome: "  Torno CNC 01  ",
       tipo: "  CNC  ",
       capacidadePorHora: 120,
@@ -17,6 +19,7 @@ describe("buildMachineCreateRequest", () => {
     });
 
     expect(body).toEqual({
+      companyId: 7,
       nome: "Torno CNC 01",
       tipo: "CNC",
       capacidadePorHora: 120,
@@ -63,7 +66,7 @@ describe("listMachines", () => {
 
     const result = await listMachines();
 
-    expect(getSpy).toHaveBeenCalledWith("/maquinas");
+    expect(getSpy).toHaveBeenCalledWith("/api/maquinas");
     expect(result).toEqual(machines);
   });
 });
@@ -78,6 +81,11 @@ describe("createMachine", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.spyOn(auth, "getAuthCompany").mockReturnValue({
+      companyId: 7,
+      companyName: "ACME Ltda",
+      email: "contato@acme.com",
+    });
   });
 
   it("envia o payload mapeado para a API e retorna data da resposta (mock)", async () => {
@@ -87,7 +95,8 @@ describe("createMachine", () => {
 
     const result = await createMachine(payload);
 
-    expect(postSpy).toHaveBeenCalledWith("/maquinas", {
+    expect(postSpy).toHaveBeenCalledWith("/api/maquinas", {
+      companyId: 7,
       nome: "Torno CNC 01",
       tipo: "CNC",
       capacidadePorHora: 120,

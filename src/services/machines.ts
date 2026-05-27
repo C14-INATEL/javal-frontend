@@ -1,4 +1,5 @@
 import { api } from "../lib/api";
+import { getAuthCompany } from "../lib/auth";
 
 export type MachineStatus = "ATIVA" | "INATIVA" | "MANUTENCAO";
 
@@ -11,11 +12,14 @@ export type Machine = {
 };
 
 export type CreateMachinePayload = {
+  companyId: number;
   nome: string;
   tipo: string;
   capacidadePorHora: number;
   status: MachineStatus;
 };
+
+export type CreateMachineFormPayload = Omit<CreateMachinePayload, "companyId">;
 
 export const MACHINE_STATUS_OPTIONS: {
   value: MachineStatus;
@@ -53,6 +57,7 @@ export function parseMachinesList(data: unknown): Machine[] {
 /** Mapeia o formulário para o JSON esperado pelo endpoint (função pura; testável sem HTTP). */
 export function buildMachineCreateRequest(payload: CreateMachinePayload) {
   return {
+    companyId: payload.companyId,
     nome: payload.nome.trim(),
     tipo: payload.tipo.trim(),
     capacidadePorHora: payload.capacidadePorHora,
@@ -60,8 +65,8 @@ export function buildMachineCreateRequest(payload: CreateMachinePayload) {
   };
 }
 
-/** Path relativo ao `baseURL` (dev: /api-backend → POST …/api-backend/maquinas). */
-const MAQUINAS_PATH = "/maquinas";
+/** Path relativo ao `baseURL` (dev: /api-backend → GET …/api-backend/api/maquinas). */
+const MAQUINAS_PATH = "/api/maquinas";
 
 export async function listMachines(): Promise<Machine[]> {
   const { data } = await api.get<unknown>(MAQUINAS_PATH);
@@ -69,11 +74,19 @@ export async function listMachines(): Promise<Machine[]> {
 }
 
 export async function createMachine(
-  payload: CreateMachinePayload
+  payload: CreateMachineFormPayload
 ): Promise<unknown> {
+  const company = getAuthCompany();
+  if (!company) {
+    throw new Error("Sessão inválida. Faça login novamente.");
+  }
+
   const { data } = await api.post<unknown>(
     MAQUINAS_PATH,
-    buildMachineCreateRequest(payload)
+    buildMachineCreateRequest({
+      ...payload,
+      companyId: company.companyId,
+    })
   );
   return data;
 }

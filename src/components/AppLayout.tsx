@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import conveyorImg from "../assets/conveyor.png";
 import { clearAuthSession, getAuthCompany } from "../lib/auth";
 
@@ -38,22 +38,53 @@ export default function AppLayout({
       </div>
 
       <header className="relative z-10 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link
-            to="/machines"
-            className="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg"
-          >
-            <img
-              src={conveyorImg}
-              alt=""
-              className="w-9 h-9 object-contain"
-              aria-hidden
-            />
-            <span className="text-lg font-extrabold tracking-[0.15em] text-white">
-              JAVAL
-            </span>
-          </Link>
-          <div className="flex items-center gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 min-w-0 flex-1">
+            <Link
+              to="/machines"
+              className="flex items-center gap-3 shrink-0 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg w-fit"
+            >
+              <img
+                src={conveyorImg}
+                alt=""
+                className="w-9 h-9 object-contain"
+                aria-hidden
+              />
+              <span className="text-lg font-extrabold tracking-[0.15em] text-white">
+                JAVAL
+              </span>
+            </Link>
+            <nav
+              className="flex flex-wrap items-center gap-1 sm:border-l sm:border-white/10 sm:pl-6"
+              aria-label="Área logada"
+            >
+              <NavLink
+                to="/machines"
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-lg text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
+                    isActive
+                      ? "text-white bg-white/10 border border-white/15"
+                      : "text-slate-400 hover:text-white border border-transparent"
+                  }`
+                }
+              >
+                Máquinas
+              </NavLink>
+              <NavLink
+                to="/products"
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-lg text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
+                    isActive
+                      ? "text-white bg-white/10 border border-white/15"
+                      : "text-slate-400 hover:text-white border border-transparent"
+                  }`
+                }
+              >
+                Produtos
+              </NavLink>
+            </nav>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
             {company && (
               <p className="hidden sm:block text-sm text-slate-400 truncate max-w-[200px]">
                 <span className="text-slate-500">Empresa: </span>

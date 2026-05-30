@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Machines from "./pages/Machines";
 import MachinesList from "./pages/MachinesList";
+import ProductNew from "./pages/ProductNew";
+import ProductsList from "./pages/ProductsList";
 import "./App.css";
 
 function App() {
@@ -41,6 +43,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Machines />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute>
+              <ProductsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products/new"
+          element={
+            <ProtectedRoute>
+              <ProductNew />
             </ProtectedRoute>
           }
         />

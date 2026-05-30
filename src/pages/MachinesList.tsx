@@ -81,8 +81,8 @@ export default function MachinesList() {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [machineToDelete, setMachineToDelete] = useState<Machine | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Machine | null>(null);
   const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
   const [editStatus, setEditStatus] = useState<MachineStatus>("ATIVA");
   const [isSavingEdit, setIsSavingEdit] = useState(false);
@@ -123,6 +123,22 @@ export default function MachinesList() {
     );
   }, [machines, search]);
 
+  async function confirmDeleteMachine() {
+    if (!pendingDelete) return;
+    const id = pendingDelete.id;
+    setDeletingId(id);
+    setError(null);
+    try {
+      await deleteMachine(id);
+      setMachines((prev) => prev.filter((m) => m.id !== id));
+      setPendingDelete(null);
+    } catch (err) {
+      setError(getRegisterErrorMessage(err));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   function openEdit(machine: Machine) {
     setEditingMachine(machine);
     setEditStatus(machine.status);
@@ -156,31 +172,6 @@ export default function MachinesList() {
     }
   }
 
-  function openDelete(machine: Machine) {
-    setMachineToDelete(machine);
-  }
-
-  function closeDelete() {
-    if (isDeleting) return;
-    setMachineToDelete(null);
-  }
-
-  async function confirmDelete() {
-    if (!machineToDelete) return;
-
-    setIsDeleting(true);
-    setError(null);
-    try {
-      await deleteMachine(machineToDelete.id);
-      setMachines((prev) => prev.filter((m) => m.id !== machineToDelete.id));
-      setMachineToDelete(null);
-    } catch (err) {
-      setError(getRegisterErrorMessage(err));
-    } finally {
-      setIsDeleting(false);
-    }
-  }
-
   const outlineButtonClass =
     "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white border border-white/20 bg-white/5 hover:bg-white/10 hover:border-cyan-500/40 transition no-underline";
 
@@ -198,6 +189,19 @@ export default function MachinesList() {
         </Link>
       }
     >
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Excluir máquina?"
+        highlight={pendingDelete?.nome}
+        confirmLabel="Excluir"
+        cancelLabel="Cancelar"
+        isLoading={
+          pendingDelete !== null && deletingId === pendingDelete.id
+        }
+        onConfirm={confirmDeleteMachine}
+        onCancel={() => setPendingDelete(null)}
+      />
+
       {error && (
         <div
           className="mb-6 flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
@@ -338,15 +342,11 @@ export default function MachinesList() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => openDelete(machine)}
-                          disabled={
-                            isDeleting && machineToDelete?.id === machine.id
-                          }
+                          onClick={() => setPendingDelete(machine)}
+                          disabled={deletingId !== null}
                           className="px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/25 hover:bg-red-500/20 transition disabled:opacity-50"
                         >
-                          {isDeleting && machineToDelete?.id === machine.id
-                            ? "Excluindo…"
-                            : "Excluir"}
+                          {deletingId === machine.id ? "Excluindo…" : "Excluir"}
                         </button>
                       </div>
                     </td>
@@ -357,17 +357,6 @@ export default function MachinesList() {
           </div>
         )}
       </section>
-
-      <ConfirmDialog
-        open={machineToDelete !== null}
-        title="Excluir máquina?"
-        highlight={machineToDelete?.nome}
-        confirmLabel="Excluir"
-        cancelLabel="Cancelar"
-        isLoading={isDeleting}
-        onConfirm={confirmDelete}
-        onCancel={closeDelete}
-      />
 
       {editingMachine && (
         <div

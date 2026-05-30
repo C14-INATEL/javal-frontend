@@ -121,3 +121,74 @@ export function getRegisterErrorMessage(err: unknown): string {
   }
   return "Ocorreu um erro inesperado. Tente novamente.";
 }
+
+/** Mensagens amigáveis para fluxo de ordens de produção (API em PT ou EN). */
+export function getOrdemErrorMessage(err: unknown): string {
+  const base = getRegisterErrorMessage(err);
+  const lower = base.toLowerCase();
+
+  if (
+    lower.includes("inativa") ||
+    lower.includes("inactive") ||
+    lower.includes("máquina inativa") ||
+    lower.includes("maquina inativa")
+  ) {
+    return "Não é possível criar ordem: a máquina está inativa.";
+  }
+  if (
+    (lower.includes("manutenção") ||
+      lower.includes("manutencao") ||
+      lower.includes("maintenance")) &&
+    !(
+      lower.includes("criar") ||
+      lower.includes("create") ||
+      lower.includes("cadastr")
+    ) &&
+    (lower.includes("iniciar") ||
+      lower.includes("start") ||
+      lower.includes("pendente") ||
+      lower.includes("não pode") ||
+      lower.includes("nao pode") ||
+      lower.includes("máquina") ||
+      lower.includes("maquina"))
+  ) {
+    return "Não é possível iniciar a ordem: a máquina está em manutenção.";
+  }
+  if (
+    lower.includes("pendente") &&
+    (lower.includes("iniciar") || lower.includes("start") || lower.includes("apenas"))
+  ) {
+    return "Só é possível iniciar ordens com status pendente.";
+  }
+  if (
+    lower.includes("em produção") ||
+    lower.includes("em_producao") ||
+    lower.includes("em producao")
+  ) {
+    if (
+      lower.includes("finalizar") ||
+      lower.includes("finish") ||
+      lower.includes("apenas")
+    ) {
+      return "Só é possível finalizar ordens em produção.";
+    }
+  }
+  if (
+    lower.includes("cancelar") ||
+    lower.includes("cancel") ||
+    lower.includes("cancelada")
+  ) {
+    if (
+      lower.includes("pendente") ||
+      lower.includes("em produção") ||
+      lower.includes("em_producao") ||
+      lower.includes("em producao") ||
+      lower.includes("apenas") ||
+      lower.includes("only")
+    ) {
+      return "Só é possível cancelar ordens pendentes ou em produção.";
+    }
+  }
+
+  return base;
+}

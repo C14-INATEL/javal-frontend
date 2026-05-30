@@ -9,6 +9,8 @@ type AppLayoutProps = {
   subtitle?: string;
   action?: ReactNode;
   children: ReactNode;
+  /** Área de conteúdo mais larga (útil para painéis densos). */
+  wide?: boolean;
 };
 
 export default function AppLayout({
@@ -17,6 +19,7 @@ export default function AppLayout({
   subtitle,
   action,
   children,
+  wide = false,
 }: AppLayoutProps) {
   const navigate = useNavigate();
   const company = getAuthCompany();
@@ -41,7 +44,7 @@ export default function AppLayout({
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 min-w-0 flex-1">
             <Link
-              to="/machines"
+              to="/dashboard"
               className="flex items-center gap-3 shrink-0 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg w-fit"
             >
               <img
@@ -58,6 +61,19 @@ export default function AppLayout({
               className="flex flex-wrap items-center gap-1 sm:border-l sm:border-white/10 sm:pl-6"
               aria-label="Área logada"
             >
+              <NavLink
+                to="/dashboard"
+                end
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-lg text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
+                    isActive
+                      ? "text-white bg-white/10 border border-white/15"
+                      : "text-slate-400 hover:text-white border border-transparent"
+                  }`
+                }
+              >
+                Painel
+              </NavLink>
               <NavLink
                 to="/machines"
                 className={({ isActive }) =>
@@ -117,7 +133,11 @@ export default function AppLayout({
         </div>
       </header>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <main
+        className={`relative z-10 mx-auto px-4 sm:px-6 py-8 sm:py-10 ${
+          wide ? "max-w-7xl" : "max-w-6xl"
+        }`}
+      >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400 mb-2">

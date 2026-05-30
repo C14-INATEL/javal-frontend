@@ -74,7 +74,7 @@ export default function Login() {
         locationState?.from?.pathname &&
         locationState.from.pathname !== "/login"
           ? locationState.from.pathname
-          : "/machines";
+          : "/dashboard";
       navigate(redirectTo, { replace: true });
     } catch (err) {
       setError(getLoginErrorMessage(err));

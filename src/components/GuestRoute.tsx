@@ -9,7 +9,7 @@ type GuestRouteProps = {
 /** Rotas públicas: redireciona usuários já autenticados para o app. */
 export default function GuestRoute({ children }: GuestRouteProps) {
   if (isAuthenticated()) {
-    return <Navigate to="/machines" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

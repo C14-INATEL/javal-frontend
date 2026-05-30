@@ -9,6 +9,7 @@ import ProductNew from "./pages/ProductNew";
 import ProductsList from "./pages/ProductsList";
 import OrderNew from "./pages/OrderNew";
 import Orders from "./pages/Orders";
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
 
 function App() {
@@ -30,6 +31,14 @@ function App() {
             <GuestRoute>
               <Register />
             </GuestRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
           }
         />
         <Route

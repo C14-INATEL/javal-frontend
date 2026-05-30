@@ -82,6 +82,19 @@ export default function AppLayout({
               >
                 Produtos
               </NavLink>
+              <NavLink
+                to="/orders"
+                end
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-lg text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
+                    isActive
+                      ? "text-white bg-white/10 border border-white/15"
+                      : "text-slate-400 hover:text-white border border-transparent"
+                  }`
+                }
+              >
+                Ordens
+              </NavLink>
             </nav>
           </div>
           <div className="flex items-center gap-4 shrink-0">

@@ -1,0 +1,32 @@
+FROM jenkins/jenkins:lts-jdk21
+
+USER root
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN jenkins-plugin-cli --plugins \
+    workflow-aggregator:latest \
+    pipeline-stage-view:latest \
+    pipeline-utility-steps:latest \
+    git:latest \
+    github:latest \
+    junit:latest \
+    credentials-binding:latest \
+    plain-credentials:latest \
+    ansicolor:latest \
+    timestamper:latest \
+    build-timeout:latest
+
+USER jenkins
+
+EXPOSE 8080 50000

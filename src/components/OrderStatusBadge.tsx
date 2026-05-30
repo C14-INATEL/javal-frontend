@@ -16,10 +16,6 @@ const STATUS_STYLES = {
   },
 } as const;
 
-export function getStatusOrdemLabel(status: StatusOrdem): string {
-  return STATUS_LABELS[status];
-}
-
 type OrderStatusBadgeProps = {
   status: StatusOrdem;
   variant?: keyof typeof STATUS_STYLES;
@@ -34,7 +30,7 @@ export default function OrderStatusBadge({
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${STATUS_STYLES[variant][status]}`}
     >
-      {getStatusOrdemLabel(status)}
+      {STATUS_LABELS[status]}
     </span>
   );
 }

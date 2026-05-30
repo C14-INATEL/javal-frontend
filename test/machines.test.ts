@@ -4,6 +4,7 @@ import {
   createMachine,
   listMachines,
   parseMachinesList,
+  updateMachineStatus,
 } from "../src/services/machines";
 import { api } from "../src/lib/api";
 import * as auth from "../src/lib/auth";
@@ -68,6 +69,34 @@ describe("listMachines", () => {
 
     expect(getSpy).toHaveBeenCalledWith("/api/maquinas");
     expect(result).toEqual(machines);
+  });
+});
+
+describe("updateMachineStatus", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("envia PATCH com status na query e retorna a máquina atualizada (mock)", async () => {
+    const updated = {
+      id: 1,
+      nome: "Torno CNC",
+      tipo: "Usinagem",
+      capacidadePorHora: 50,
+      status: "MANUTENCAO" as const,
+    };
+    const patchSpy = vi
+      .spyOn(api, "patch")
+      .mockResolvedValueOnce({ data: updated });
+
+    const result = await updateMachineStatus(1, "MANUTENCAO");
+
+    expect(patchSpy).toHaveBeenCalledWith(
+      "/api/maquinas/1/status",
+      null,
+      { params: { status: "MANUTENCAO" } }
+    );
+    expect(result).toEqual(updated);
   });
 });
 

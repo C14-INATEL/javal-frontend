@@ -8,7 +8,10 @@ import { getRegisterErrorMessage } from "../lib/registerErrors";
 import {
   deleteMachine,
   listMachines,
+  MACHINE_STATUS_OPTIONS,
+  updateMachineStatus,
   type Machine,
+  type MachineStatus,
 } from "../services/machines";
 
 function StatCard({
@@ -80,6 +83,9 @@ export default function MachinesList() {
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Machine | null>(null);
+  const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
+  const [editStatus, setEditStatus] = useState<MachineStatus>("ATIVA");
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   const loadMachines = useCallback(async () => {
     setIsLoading(true);
@@ -133,8 +139,44 @@ export default function MachinesList() {
     }
   }
 
+  function openEdit(machine: Machine) {
+    setEditingMachine(machine);
+    setEditStatus(machine.status);
+  }
+
+  function closeEdit() {
+    setEditingMachine(null);
+  }
+
+  async function handleSaveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingMachine) return;
+
+    if (editStatus === editingMachine.status) {
+      closeEdit();
+      return;
+    }
+
+    setIsSavingEdit(true);
+    setError(null);
+    try {
+      const updated = await updateMachineStatus(editingMachine.id, editStatus);
+      setMachines((prev) =>
+        prev.map((m) => (m.id === editingMachine.id ? updated : m))
+      );
+      closeEdit();
+    } catch (err) {
+      setError(getRegisterErrorMessage(err));
+    } finally {
+      setIsSavingEdit(false);
+    }
+  }
+
   const outlineButtonClass =
     "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white border border-white/20 bg-white/5 hover:bg-white/10 hover:border-cyan-500/40 transition no-underline";
+
+  const fieldClass =
+    "w-full rounded-xl bg-slate-950/60 border border-white/10 px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 disabled:opacity-60 disabled:cursor-not-allowed";
 
   return (
     <AppLayout
@@ -152,6 +194,7 @@ export default function MachinesList() {
         title="Excluir máquina?"
         highlight={pendingDelete?.nome}
         confirmLabel="Excluir"
+        cancelLabel="Cancelar"
         isLoading={
           pendingDelete !== null && deletingId === pendingDelete.id
         }
@@ -292,9 +335,8 @@ export default function MachinesList() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           type="button"
-                          disabled
-                          title="Em breve"
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 bg-slate-800/50 border border-white/10 cursor-not-allowed"
+                          onClick={() => openEdit(machine)}
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-white/5 border border-white/10 hover:bg-white/10 transition"
                         >
                           Editar
                         </button>
@@ -304,7 +346,7 @@ export default function MachinesList() {
                           disabled={deletingId !== null}
                           className="px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/25 hover:bg-red-500/20 transition disabled:opacity-50"
                         >
-                          Excluir
+                          {deletingId === machine.id ? "Excluindo…" : "Excluir"}
                         </button>
                       </div>
                     </td>
@@ -315,6 +357,117 @@ export default function MachinesList() {
           </div>
         )}
       </section>
+
+      {editingMachine && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm"
+          role="presentation"
+          onClick={closeEdit}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-machine-title"
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form onSubmit={handleSaveEdit} className="p-6 space-y-4">
+              <div>
+                <h2
+                  id="edit-machine-title"
+                  className="text-lg font-semibold text-white"
+                >
+                  Editar máquina
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Por enquanto só o status pode ser alterado.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="edit-nome" className="text-sm font-medium text-slate-300">
+                  Nome
+                </label>
+                <input
+                  id="edit-nome"
+                  type="text"
+                  value={editingMachine.nome}
+                  disabled
+                  className={fieldClass}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="edit-tipo" className="text-sm font-medium text-slate-300">
+                  Tipo
+                </label>
+                <input
+                  id="edit-tipo"
+                  type="text"
+                  value={editingMachine.tipo}
+                  disabled
+                  className={fieldClass}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="edit-capacidade"
+                  className="text-sm font-medium text-slate-300"
+                >
+                  Capacidade por hora
+                </label>
+                <input
+                  id="edit-capacidade"
+                  type="number"
+                  value={editingMachine.capacidadePorHora}
+                  disabled
+                  className={fieldClass}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="edit-status" className="text-sm font-medium text-slate-300">
+                  Status
+                </label>
+                <select
+                  id="edit-status"
+                  value={editStatus}
+                  onChange={(e) =>
+                    setEditStatus(e.target.value as MachineStatus)
+                  }
+                  disabled={isSavingEdit}
+                  className={fieldClass}
+                >
+                  {MACHINE_STATUS_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={closeEdit}
+                  disabled={isSavingEdit}
+                  className="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 border border-white/10 hover:bg-white/5 transition disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingEdit}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-105 transition disabled:opacity-50"
+                >
+                  {isSavingEdit ? "Salvando…" : "Salvar"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }

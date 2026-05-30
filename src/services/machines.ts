@@ -91,6 +91,16 @@ export async function createMachine(
   return data;
 }
 
+export async function updateMachineStatus(
+  id: number,
+  status: MachineStatus
+): Promise<Machine> {
+  const { data } = await api.patch<Machine>(`${MAQUINAS_PATH}/${id}/status`, null, {
+    params: { status },
+  });
+  return data;
+}
+
 export async function deleteMachine(id: number): Promise<void> {
   await api.delete(`${MAQUINAS_PATH}/${id}`);
 }

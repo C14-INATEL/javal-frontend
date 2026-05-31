@@ -33,6 +33,8 @@ RUN jenkins-plugin-cli --plugins \
     timestamper:latest \
     build-timeout:latest
 
+RUN groupadd -f docker && usermod -aG docker jenkins
+
 USER jenkins
 
 EXPOSE 8080 50000

@@ -11,7 +11,7 @@ pipeline {
     }
 
     environment {
-        NOME_PIPELINE = 'javal-frontend - CI (lint, testes, build)'
+        NOME_PIPELINE = 'javal-frontend - CI (lint, testes, build, docker)'
     }
 
     stages {
@@ -52,6 +52,16 @@ pipeline {
             post {
                 success { echo 'Build concluído com sucesso.' }
                 failure { echo 'Build falhou (tsc ou vite).' }
+            }
+        }
+
+        stage('Build Docker') {
+            steps {
+                sh 'docker build -t javal-frontend:prod .'
+            }
+            post {
+                success { echo 'Imagem Docker criada com sucesso.' }
+                failure { echo 'Falha ao criar imagem Docker.' }
             }
         }
     }

@@ -1,7 +1,21 @@
+name: javal-frontend
+
 volumes:
   jenkins-data:
 
 services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: javal-frontend:prod
+    container_name: javal-frontend-web
+    restart: unless-stopped
+    ports:
+      - "5174:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   jenkins:
     build:
       context: .
@@ -15,5 +29,6 @@ services:
       - "50000:50000"
     volumes:
       - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false

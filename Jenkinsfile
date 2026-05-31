@@ -38,6 +38,9 @@ pipeline {
                         sh 'npm run test'
                     }
                     post {
+                        always {
+                            junit 'test-results.xml'
+                        }
                         success { echo 'Vitest: todos os testes passaram.' }
                         failure { echo 'Vitest: falhas nos testes.' }
                     }

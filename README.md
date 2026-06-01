@@ -427,6 +427,12 @@ Resposta aceita: a IA confirmou que sim, era a abordagem correta e mais elegante
 
 Resposta aceita: a IA identificou que a função `getStatusOrdemLabel` deveria ser removida e o `STATUS_LABELS[status]` usado diretamente no JSX. O commit foi classificado corretamente como `refactor: inline function` (Martin Fowler).
 
+**Prompt 4 — Melhoria de layout e criação do AuthLayout (Cursor)**
+
+>"a gente consegue colocar esse ícone @src/assets/conveyor.png nas páginas e deixar um layout mais bonito e moderno?"
+
+Resposta aceita: o Cursor criou o componente `AuthLayout` com layout em duas colunas reutilizável — painel escuro com gradiente, brilhos âmbar/ciano e o ícone conveyor.png em destaque à esquerda; card branco com formulário à direita. As páginas `/login, /register e /machines` foram atualizadas com o novo visual. A solução foi aceita após revisão pelo grupo.
+
 ### Dinâmica de uso
 
 A IA foi utilizada de forma interativa durante sessões de desenvolvimento, principalmente para resolução de erros de configuração de infraestrutura (Docker, Jenkins) e para orientação sobre boas práticas de refactoring. O Cursor foi usado individualmente para melhorias visuais nos componentes.

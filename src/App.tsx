@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Machines from "./pages/Machines";
 import MachinesList from "./pages/MachinesList";
+import Falhas from "./pages/Falhas";
 import ProductNew from "./pages/ProductNew";
 import ProductsList from "./pages/ProductsList";
 import OrderNew from "./pages/OrderNew";
@@ -54,6 +55,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Machines />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/falhas"
+          element={
+            <ProtectedRoute>
+              <Falhas />
             </ProtectedRoute>
           }
         />

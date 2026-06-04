@@ -332,7 +332,7 @@ export default function MachinesList() {
                       <MachineStatusBadge status={machine.status} variant="dark" />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         <button
                           type="button"
                           onClick={() => openEdit(machine)}
@@ -340,6 +340,12 @@ export default function MachinesList() {
                         >
                           Editar
                         </button>
+                        <Link
+                          to={`/falhas?maquinaId=${machine.id}`}
+                          className="inline-flex px-3 py-1.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 transition no-underline"
+                        >
+                          Registrar falha
+                        </Link>
                         <button
                           type="button"
                           onClick={() => setPendingDelete(machine)}

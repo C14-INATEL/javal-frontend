@@ -207,7 +207,7 @@ Uma funcionalidade era considerada pronta quando:
 | Pull Requests mergeados | 40+ |
 | Testes unitários | 37 (7 suites) |
 | Stages no pipeline CI/CD | 6 |
-| Histórias de usuário entregues | 4 de 5 |
+| Histórias de usuário entregues | 5 de 5 |
 
 ---
 
@@ -273,8 +273,8 @@ Como gerente de produção, eu quero fazer login com meu email e senha, para que
 ---
 
 ### US-02 — Gerenciamento de Máquinas
-**Prioridade:** Alta | **Status:** Em andamento
-**Rastreabilidade:** PR [#10](https://github.com/C14-INATEL/javal-frontend/pull/10) [#19](https://github.com/C14-INATEL/javal-frontend/pull/19) [#25](https://github.com/C14-INATEL/javal-frontend/pull/25) → Testes: `machines.test.tsx`
+**Prioridade:** Alta | **Status:** Entregue
+**Rastreabilidade:** PR [#10](https://github.com/C14-INATEL/javal-frontend/pull/10) [#19](https://github.com/C14-INATEL/javal-frontend/pull/19) [#25](https://github.com/C14-INATEL/javal-frontend/pull/25) [#47](https://github.com/C14-INATEL/javal-frontend/pull/47) → Testes: `machines.test.tsx`, `falhas.test.ts`
 
 Como gerente de produção, eu quero gerenciar as máquinas da fábrica em uma tela administrativa para que eu possa acompanhar o status dos equipamentos e registrar falhas rapidamente.
 

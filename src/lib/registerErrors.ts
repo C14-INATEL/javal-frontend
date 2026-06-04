@@ -65,6 +65,7 @@ export function getRegisterErrorMessage(err: unknown): string {
           message?: string;
           error?: string;
           errors?: Array<{ defaultMessage?: string }>;
+          fields?: Array<{ field?: string; message?: string }>;
         }
       | string
       | undefined;
@@ -73,6 +74,16 @@ export function getRegisterErrorMessage(err: unknown): string {
       return mensagemApiParaPortugues(data);
     }
     if (data && typeof data === "object") {
+      if (Array.isArray(data.fields) && data.fields.length > 0) {
+        const msgs = data.fields
+          .map((f) =>
+            typeof f.message === "string" && f.message.trim()
+              ? f.message.trim()
+              : null
+          )
+          .filter((m): m is string => m !== null);
+        if (msgs.length > 0) return msgs.join(" ");
+      }
       if (Array.isArray(data.errors) && data.errors.length > 0) {
         const msgs = data.errors
           .map((e) => e.defaultMessage)

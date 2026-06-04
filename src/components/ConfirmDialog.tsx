@@ -6,9 +6,13 @@ type ConfirmDialogProps = {
   description?: ReactNode;
   /** Texto em destaque (ex.: nome do item a excluir). */
   highlight?: string;
+  /** `danger`: exclusão (padrão). `neutral`: confirmações sem tom destrutivo. */
+  variant?: "danger" | "neutral";
   confirmLabel?: string;
   cancelLabel?: string;
   isLoading?: boolean;
+  /** Texto do botão de confirmação enquanto `isLoading` (ex.: "Resolvendo…"). */
+  loadingConfirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -47,14 +51,35 @@ function CloseIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg
+      className="w-7 h-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+}
+
 export default function ConfirmDialog({
   open,
   title,
   description,
   highlight,
+  variant = "danger",
   confirmLabel = "Confirmar",
   cancelLabel = "Cancelar",
   isLoading = false,
+  loadingConfirmLabel,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -86,7 +111,11 @@ export default function ConfirmDialog({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-red-500/10 to-transparent"
+          className={`pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b to-transparent ${
+            variant === "danger"
+              ? "from-red-500/10"
+              : "from-cyan-500/10"
+          }`}
           aria-hidden
         />
 
@@ -101,8 +130,14 @@ export default function ConfirmDialog({
         </button>
 
         <div className="relative px-6 pt-8 pb-2 text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-400 ring-1 ring-red-500/20">
-            <TrashIcon />
+          <div
+            className={`mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ring-1 ${
+              variant === "danger"
+                ? "bg-red-500/10 text-red-400 ring-red-500/20"
+                : "bg-cyan-500/10 text-cyan-400 ring-cyan-500/20"
+            }`}
+          >
+            {variant === "danger" ? <TrashIcon /> : <CheckIcon />}
           </div>
 
           <h2
@@ -116,33 +151,39 @@ export default function ConfirmDialog({
             {highlight ? (
               <>
                 <p className="text-sm text-slate-400">
-                  Você está prestes a excluir
+                  {variant === "danger"
+                    ? "Você está prestes a excluir"
+                    : "Confirme os dados abaixo"}
                 </p>
                 <div className="rounded-xl border border-white/10 bg-slate-950/80 px-4 py-3">
                   <p className="text-sm font-semibold text-white truncate">
                     {highlight}
                   </p>
                 </div>
-                <p className="flex items-center justify-center gap-2 text-sm text-amber-400/90">
-                  <svg
-                    className="w-4 h-4 shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-                    />
-                  </svg>
-                  <span>
-                    {description ??
-                      "Esta ação é permanente e não pode ser desfeita."}
-                  </span>
-                </p>
+                <div className="flex justify-center px-1">
+                  <div className="flex max-w-[min(100%,18rem)] items-start gap-2 text-left text-sm text-amber-400/90">
+                    <svg
+                      className="mt-0.5 h-4 w-4 shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                      />
+                    </svg>
+                    <span className="min-w-0 leading-snug">
+                      {description ??
+                        (variant === "danger"
+                          ? "Esta ação é permanente e não pode ser desfeita."
+                          : "Confirme para continuar.")}
+                    </span>
+                  </div>
+                </div>
               </>
             ) : (
               description && (
@@ -167,9 +208,16 @@ export default function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-500 border border-red-500/40 transition disabled:opacity-50"
+            className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-white border transition disabled:opacity-50 ${
+              variant === "danger"
+                ? "bg-red-600 hover:bg-red-500 border-red-500/40"
+                : "bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-105 border-cyan-500/30"
+            }`}
           >
-            {isLoading ? "Excluindo…" : confirmLabel}
+            {isLoading
+              ? loadingConfirmLabel ??
+                (variant === "danger" ? "Excluindo…" : "Processando…")
+              : confirmLabel}
           </button>
         </div>
       </div>

@@ -444,3 +444,9 @@ A IA foi utilizada de forma interativa durante sessões de desenvolvimento, prin
 - Definição de quais testes eram relevantes ao domínio
 - Configuração do `nginx.conf` e do proxy de desenvolvimento
 - Decisão sobre as tecnologias utilizadas no projeto
+
+---
+
+## 📄 Licença
+
+Este projeto está sob uso acadêmico — INATEL © 2025.

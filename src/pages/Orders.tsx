@@ -6,6 +6,7 @@ import OrderStatusBadge from "../components/OrderStatusBadge";
 import { getOrdemErrorMessage } from "../lib/registerErrors";
 import { listMachines, type Machine } from "../services/machines";
 import { AlertIcon, ClipboardIcon, SearchIcon } from "../components/icons";
+import { formatDateTime } from "../lib/formatters";
 import {
   cancelOrder,
   finishOrder,
@@ -24,17 +25,6 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
   { value: "FINALIZADA", label: "Finalizada" },
   { value: "CANCELADA", label: "Cancelada" },
 ];
-
-
-function formatDateTime(iso: string | null): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
-}
 
 const filterChipBase =
   "px-3 py-1.5 rounded-lg text-xs font-semibold border transition focus:outline-none focus:ring-2 focus:ring-cyan-500/50";

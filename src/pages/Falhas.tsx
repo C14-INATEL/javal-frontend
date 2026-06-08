@@ -4,6 +4,8 @@ import AppLayout from "../components/AppLayout";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
 import { AlertIcon } from "../components/icons";
+import { formatDateTime } from "../lib/formatters";
+
 import {
   createFalha,
   FALHA_SEVERIDADE_OPTIONS,
@@ -35,16 +37,6 @@ function statusFalhaBadgeClass(status: FalhaMaquinaResponse["status"]): string {
   return status === "ABERTA"
     ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
     : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
-}
-
-function formatDataHora(iso: string | null): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
 }
 
 export default function Falhas() {
@@ -436,10 +428,10 @@ export default function Falhas() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-slate-400 whitespace-nowrap tabular-nums text-xs">
-                        {formatDataHora(f.dataAbertura)}
+                        {formatDateTime(f.dataAbertura)}
                         {f.dataResolucao && (
                           <span className="block text-slate-500">
-                            Resolv.: {formatDataHora(f.dataResolucao)}
+                            Resolv.: {formatDateTime(f.dataResolucao)}
                           </span>
                         )}
                       </td>

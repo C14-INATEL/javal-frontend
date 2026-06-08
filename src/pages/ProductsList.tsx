@@ -3,91 +3,13 @@ import { Link } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
+import { AlertIcon, SearchIcon, PackageIcon } from "../components/icons";
+import { StatCard } from "../components/StatCard";
 import {
   deleteProduto,
   listProdutos,
   type Produto,
 } from "../services/produtos";
-
-function StatCard({
-  icon,
-  iconBg,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  iconBg: string;
-  value: number;
-  label: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm p-5 flex items-center gap-4">
-      <div
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${iconBg}`}
-      >
-        {icon}
-      </div>
-      <div>
-        <p className="text-3xl font-bold text-white tabular-nums">{value}</p>
-        <p className="text-sm text-slate-400 mt-0.5">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg
-      className="w-4 h-4 text-slate-500"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"
-      />
-    </svg>
-  );
-}
-
-function AlertIcon() {
-  return (
-    <svg
-      className="w-4 h-4 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-      />
-    </svg>
-  );
-}
-
-function PackageIcon() {
-  return (
-    <svg
-      className="w-10 h-10 text-cyan-400/90"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-      />
-    </svg>
-  );
-}
 
 export default function ProductsList() {
   const [produtos, setProdutos] = useState<Produto[]>([]);

@@ -5,6 +5,8 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import MachineStatusBadge from "../components/MachineStatusBadge";
 import conveyorImg from "../assets/conveyor.png";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
+import { AlertIcon, SearchIcon } from "../components/icons";
+import { StatCard } from "../components/StatCard";
 import {
   deleteMachine,
   listMachines,
@@ -13,68 +15,6 @@ import {
   type Machine,
   type MachineStatus,
 } from "../services/machines";
-
-function StatCard({
-  icon,
-  iconBg,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  iconBg: string;
-  value: number;
-  label: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm p-5 flex items-center gap-4">
-      <div
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${iconBg}`}
-      >
-        {icon}
-      </div>
-      <div>
-        <p className="text-3xl font-bold text-white tabular-nums">{value}</p>
-        <p className="text-sm text-slate-400 mt-0.5">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg
-      className="w-4 h-4 text-slate-500"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"
-      />
-    </svg>
-  );
-}
-
-function AlertIcon() {
-  return (
-    <svg
-      className="w-4 h-4 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-      />
-    </svg>
-  );
-}
 
 export default function MachinesList() {
   const [machines, setMachines] = useState<Machine[]>([]);

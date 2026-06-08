@@ -132,7 +132,7 @@ O pipeline está definido no `Jenkinsfile` na raiz do projeto e é executado a c
 | Checkout SCM | Clona o repositório |
 | Instalar dependências | `npm ci` |
 | ESLint | Verifica qualidade do código |
-| Testes (Vitest) | Roda os 37 testes unitários e publica relatório |
+| Testes (Vitest) | Roda os 43 testes unitários e publica relatório |
 | Build (TypeScript + Vite) | Compila e gera o `/dist` |
 | Build Docker | Gera a imagem `javal-frontend:prod` |
 
@@ -156,7 +156,7 @@ javal-frontend/
 │   ├── pages/              # Telas da aplicação
 │   ├── services/           # Chamadas de API (axios)
 │   ├── contexts/           # Estado global
-│   └── lib/                # Configuração axios, utilitários
+│   └── lib/                # Configuração axios, utilitários, formatters
 ├── test/                   # Testes unitários (Vitest)
 ├── Dockerfile              # Build + Nginx para produção
 ├── Dockerfile.jenkins      # Imagem Jenkins customizada
@@ -204,8 +204,9 @@ Uma funcionalidade era considerada pronta quando:
 
 | Métrica | Valor |
 |---|---|
-| Pull Requests mergeados | 40+ |
-| Testes unitários | 37 (7 suites) |
+| Pull Requests mergeados | 17 |
+| Commits | 40+ |
+| Testes unitários | 43 (8 suítes) |
 | Stages no pipeline CI/CD | 6 |
 | Histórias de usuário entregues | 5 de 5 |
 
@@ -383,11 +384,62 @@ Como gerente de produção, eu quero gerenciar o catálogo de produtos da fábri
 
 ## 🔧 Refactoring
 
-### Inline Function em `OrderStatusBadge` — `refactor: inline de getStatusOrdemLabel no OrderStatusBadge`
+Ao longo do projeto foram identificados e corrigidos quatro _code smells_, todos documentados com commits rastreáveis e verificados com os 43 testes passando antes e depois de cada alteração.
+
+Os **tipos de refactoring** do catálogo de Fowler aplicados foram:
+
+| # | Mudança | Tipo (Fowler) |
+|---|---------|---------------|
+| 1 | `OrderStatusBadge` — rótulo de status direto no JSX | **Inline Function** |
+| 2 | `src/components/icons.tsx` — ícones SVG compartilhados | **Extract Class** |
+| 3 | `src/components/StatCard.tsx` — card de estatística reutilizável | **Extract Class** |
+| 4 | `src/lib/formatters.ts` — `formatDateTime` única para pedidos e falhas | **Extract Method** + **Move Method** |
+
+---
+
+### 1. Inline Function — `OrderStatusBadge`
+**Commit:** `refactor: inline de getStatusOrdemLabel no OrderStatusBadge`
+**Tipo (Fowler):** Inline Function
 
 A função `getStatusOrdemLabel` foi removida e seu conteúdo aplicado diretamente no JSX do componente.
 
 **Motivação:** a função atuava apenas como intermediária sem adicionar lógica. Sua presença no mesmo arquivo violava a regra `react-refresh/only-export-components` do ESLint, que exige que arquivos de componentes exportem apenas componentes React. A remoção eliminou o acoplamento desnecessário e corrigiu a violação sem perda de legibilidade.
+
+---
+
+### 2. Extract Class — Ícones SVG compartilhados (`icons.tsx`)
+**PR:** [refactoring](https://github.com/C14-INATEL/javal-frontend/pull/49)
+**Tipo (Fowler):** Extract Class
+
+`AlertIcon` estava definido localmente e de forma idêntica em 5 arquivos (`Dashboard.tsx`, `Falhas.tsx`, `Orders.tsx`, `MachinesList.tsx`, `ProductsList.tsx`). `SearchIcon` duplicado em 3 arquivos. `ClipboardIcon` e `PackageIcon` definidos localmente sem possibilidade de reúso.
+
+**Solução:** todos os ícones foram extraídos para `src/components/icons.tsx` e importados onde necessário.
+
+**Motivação:** DRY — qualquer alteração visual nos ícones agora exige mudança em um único lugar. Comportamento externo inalterado (43/43 testes ok).
+
+---
+
+### 3. Extract Class — Componente de estatística (`StatCard.tsx`)
+**PR:** [refactoring](https://github.com/C14-INATEL/javal-frontend/pull/49)
+**Tipo (Fowler):** Extract Class
+
+`StatCard` estava definido com implementação idêntica em `MachinesList.tsx` e `ProductsList.tsx`.
+
+**Solução:** componente extraído para `src/components/StatCard.tsx` e importado nos dois arquivos.
+
+**Motivação:** DRY — ajustes visuais no card (padding, fonte, sombra) agora exigem alteração em um único lugar. Comportamento externo inalterado (43/43 testes ok).
+
+---
+
+### 4. Extract Method + Move Method — Formatação de data (`formatters.ts`)
+**PR:** [refactoring](https://github.com/C14-INATEL/javal-frontend/pull/49)
+**Tipo (Fowler):** Extract Method + Move Method
+
+`formatDateTime` (em `Orders.tsx`) e `formatDataHora` (em `Falhas.tsx`) tinham implementação idêntica com nomes diferentes — duplicação de código e inconsistência de nomenclatura.
+
+**Solução:** função extraída para `src/lib/formatters.ts` com nome único `formatDateTime` e importada nos dois arquivos.
+
+**Motivação:** DRY + consistência de nomenclatura. Formato de data centralizado — qualquer mudança de locale ou formato exige alteração em um único lugar. Comportamento externo inalterado (43/43 testes ok).
 
 ---
 
@@ -404,7 +456,7 @@ O desenvolvimento contou com o apoio de ferramentas de IA de forma transparente.
 
 ### Para que foram usados
 
-- **Claude:** debugging e resolução de erros no pipeline Jenkins, orientação sobre configuração do Docker (volumes, permissões, `docker.sock`), refactoring do `OrderStatusBadge`
+- **Claude:** debugging e resolução de erros no pipeline Jenkins, orientação sobre configuração do Docker (volumes, permissões, `docker.sock`), refactoring do `OrderStatusBadge`, identificação de _code smells_, listagem de oportunidades adicionais de refactoring no frontend e orientação sobre os refactorings de `icons.tsx`, `StatCard.tsx` e `formatters.ts`
 - **Cursor:** melhorias de layout e estilização dos componentes frontend
 
 ### Exemplos reais de prompts utilizados
@@ -433,9 +485,21 @@ Resposta aceita: a IA identificou que a função `getStatusOrdemLabel` deveria s
 
 Resposta aceita: o Cursor criou o componente `AuthLayout` com layout em duas colunas reutilizável — painel escuro com gradiente, brilhos âmbar/ciano e o ícone conveyor.png em destaque à esquerda; card branco com formulário à direita. As páginas `/login, /register e /machines` foram atualizadas com o novo visual. A solução foi aceita após revisão pelo grupo.
 
+**Prompt 5 — Oportunidades adicionais de refactoring no frontend (Claude)**
+
+> "vc acha que no meu frontend da pra aplicar mais algum outro conceito de refactoring?"
+
+Resposta aceita: a IA inspecionou o código do repositório e apontou **três** oportunidades reais, com esforço e impacto diferentes:
+
+1. **Ícones SVG duplicados** — `AlertIcon` (e outros) copiados de forma idêntica em vários arquivos; o smell mais evidente, porém mais trabalhoso de unificar.
+2. **`StatCard` duplicado** — exemplo clássico de _Extract Component_, simples de implementar e de documentar no README.
+3. **Formatação de data duplicada** — funções equivalentes em páginas distintas; o ajuste mais rápido (extrair para um módulo e corrigir imports), com commit bem justificável.
+
+O grupo **implementou as três sugestões** no PR de refactoring (`icons.tsx`, `StatCard.tsx`, `formatters.ts`).
+
 ### Dinâmica de uso
 
-A IA foi utilizada de forma interativa durante sessões de desenvolvimento, principalmente para resolução de erros de configuração de infraestrutura (Docker, Jenkins) e para orientação sobre boas práticas de refactoring. O Cursor foi usado individualmente para melhorias visuais nos componentes.
+A IA foi utilizada de forma interativa durante sessões de desenvolvimento, principalmente para resolução de erros de configuração de infraestrutura (Docker, Jenkins), orientação sobre boas práticas de refactoring e identificação de _code smells_ no código existente. O Cursor foi usado individualmente para melhorias visuais nos componentes.
 
 ### O que não foi feito por IA
 

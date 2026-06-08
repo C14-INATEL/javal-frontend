@@ -3,6 +3,9 @@ import { Link, useSearchParams } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
+import { AlertIcon } from "../components/icons";
+import { formatDateTime } from "../lib/formatters";
+
 import {
   createFalha,
   FALHA_SEVERIDADE_OPTIONS,
@@ -19,23 +22,6 @@ import {
   type Machine,
 } from "../services/machines";
 
-function AlertIcon() {
-  return (
-    <svg
-      className="w-4 h-4 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-      />
-    </svg>
-  );
-}
 
 function severidadeBadgeClass(s: FalhaSeveridade): string {
   const map: Record<FalhaSeveridade, string> = {
@@ -51,16 +37,6 @@ function statusFalhaBadgeClass(status: FalhaMaquinaResponse["status"]): string {
   return status === "ABERTA"
     ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
     : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
-}
-
-function formatDataHora(iso: string | null): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
 }
 
 export default function Falhas() {
@@ -452,10 +428,10 @@ export default function Falhas() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-slate-400 whitespace-nowrap tabular-nums text-xs">
-                        {formatDataHora(f.dataAbertura)}
+                        {formatDateTime(f.dataAbertura)}
                         {f.dataResolucao && (
                           <span className="block text-slate-500">
-                            Resolv.: {formatDataHora(f.dataResolucao)}
+                            Resolv.: {formatDateTime(f.dataResolucao)}
                           </span>
                         )}
                       </td>

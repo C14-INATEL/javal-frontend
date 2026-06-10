@@ -178,6 +178,16 @@ javal-frontend/
 
 O projeto adotou **Kanban** como metodologia de desenvolvimento. A escolha foi motivada pela natureza individual do repositório frontend: sem sprints fixos ou cerimônias, o progresso era contínuo e as tarefas avançavam conforme o desenvolvimento de cada funcionalidade.
 
+### Fluxo de Trabalho
+
+O GitHub foi utilizado como principal ferramenta de acompanhamento das atividades. Cada funcionalidade era registrada por meio de issues e desenvolvida em uma branch específica, permitindo rastreabilidade entre requisitos, implementação e validação.
+
+De forma geral, as tarefas percorriam o seguinte fluxo:
+
+Issue criada → Desenvolvimento em branch de funcionalidade → Abertura de Pull Request → Execução de testes e validação → Merge na branch main
+
+Esse processo permitiu acompanhar a evolução do projeto de forma organizada, garantindo que cada entrega passasse por validação antes de ser incorporada ao código principal.
+
 ### Papéis e Responsabilidades
 
 | Integrante | Contribuição |

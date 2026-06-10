@@ -5,7 +5,7 @@ import AuthLayout, {
   formInputClass,
 } from "../components/AuthLayout";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
-import { isValidCnpj } from "../lib/validation";
+import { isValidCnpj, maskCnpjInput, normalizeCnpj } from "../lib/validation";
 import { registerCompany } from "../services/companies";
 
 export default function Register() {
@@ -25,10 +25,15 @@ export default function Register() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    if (type === "checkbox") {
+      setForm({ ...form, [name]: checked });
+      return;
+    }
+    if (name === "cnpj") {
+      setForm({ ...form, cnpj: maskCnpjInput(value) });
+      return;
+    }
+    setForm({ ...form, [name]: value });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -39,8 +44,17 @@ export default function Register() {
       return;
     }
 
+    const cnpjDigits = normalizeCnpj(form.cnpj);
+    if (cnpjDigits.length !== 14) {
+      setError(
+        "O CNPJ precisa de 14 números. A pontuação (., / e -) não entra nessa contagem."
+      );
+      return;
+    }
     if (!isValidCnpj(form.cnpj)) {
-      setError("Informe um CNPJ válido com 14 dígitos.");
+      setError(
+        "Este CNPJ não é válido (os dois últimos dígitos não conferem). Confira o número."
+      );
       return;
     }
 

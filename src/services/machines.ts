@@ -65,7 +65,7 @@ export function buildMachineCreateRequest(payload: CreateMachinePayload) {
   };
 }
 
-/** Path relativo ao `baseURL` (dev: /api-backend → GET …/api-backend/api/maquinas). */
+/** Path absoluto na origem (dev: proxy Vite `/api` → GET …/api/maquinas no Spring). */
 const MAQUINAS_PATH = "/api/maquinas";
 
 export async function listMachines(): Promise<Machine[]> {

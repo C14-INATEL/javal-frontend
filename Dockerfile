@@ -7,9 +7,7 @@ RUN npm ci
 
 COPY . .
 
-# Valor por omissão = mesmo path que `api.ts` (nginx faz proxy de /api-backend/ no docker/nginx.conf).
-# Se passares --build-arg VITE_API_BASE_URL=..., esse valor substitui.
-ARG VITE_API_BASE_URL=/api-backend
+ARG VITE_API_BASE_URL=
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 RUN npm run build

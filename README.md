@@ -117,7 +117,7 @@ Acesse: **http://localhost:5174**
 docker compose build --build-arg VITE_API_BASE_URL=https://api.exemplo.com frontend
 ```
 
-> Se `VITE_API_BASE_URL` não for passado, a imagem usa `/api-backend` e o Nginx faz o proxy para `http://host.docker.internal:8080`.
+> Se `VITE_API_BASE_URL` não for passado, o bundle usa URLs relativas `/api/...` e o Nginx faz o proxy para `http://host.docker.internal:8080`.
 
 ---
 

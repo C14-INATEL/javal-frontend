@@ -13,8 +13,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // Repassa o path completo (ex.: /api-backend/maquinas → mesmo path no Tomcat)
-      "/api-backend": {
+      // Spring: `/api/...` (ex. `/api/companies/login`). Repassa para o Tomcat em 8080.
+      "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
       },

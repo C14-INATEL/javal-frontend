@@ -4,6 +4,7 @@ import {
   isValidEmail,
   isValidPassword,
   formatCnpj,
+  maskCnpjInput,
   normalizeCnpj,
   validateRequiredFields,
 } from "../src/lib/validation";
@@ -52,6 +53,13 @@ describe("isValidCnpj", () => {
   it("formatCnpj aplica máscara 00.000.000/0000-00", () => {
     expect(formatCnpj("11444777000161")).toBe("11.444.777/0001-61");
     expect(formatCnpj("11.444.777/0001-61")).toBe("11.444.777/0001-61");
+  });
+
+  it("maskCnpjInput formata progressivamente e limita a 14 dígitos", () => {
+    expect(maskCnpjInput("1")).toBe("1");
+    expect(maskCnpjInput("1144477")).toBe("11.444.77");
+    expect(maskCnpjInput("11444777000161")).toBe("11.444.777/0001-61");
+    expect(maskCnpjInput("11444777000161999")).toBe("11.444.777/0001-61");
   });
 });
 

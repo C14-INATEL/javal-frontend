@@ -214,8 +214,8 @@ Uma funcionalidade era considerada pronta quando:
 
 | Métrica | Valor |
 |---|---|
-| Pull Requests mergeados | 19 |
-| Commits | 50+ |
+| Pull Requests mergeados | 20 |
+| Commits | 60+ |
 | Testes unitários | 44 (8 suítes) |
 | Stages no pipeline CI/CD | 6 |
 | Histórias de usuário entregues | 5 de 5 |

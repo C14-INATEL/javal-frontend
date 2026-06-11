@@ -5,7 +5,12 @@ import AuthLayout, {
   formInputClass,
 } from "../components/AuthLayout";
 import { getRegisterErrorMessage } from "../lib/registerErrors";
-import { isValidCnpj, maskCnpjInput, normalizeCnpj } from "../lib/validation";
+import {
+  isValidCnpj,
+  maskCnpjInput,
+  maskPhoneInput,
+  normalizeCnpj,
+} from "../lib/validation";
 import { registerCompany } from "../services/companies";
 
 export default function Register() {
@@ -31,6 +36,10 @@ export default function Register() {
     }
     if (name === "cnpj") {
       setForm({ ...form, cnpj: maskCnpjInput(value) });
+      return;
+    }
+    if (name === "phone") {
+      setForm({ ...form, phone: maskPhoneInput(value) });
       return;
     }
     setForm({ ...form, [name]: value });
@@ -157,9 +166,14 @@ export default function Register() {
             <input
               id="phone"
               name="phone"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
               placeholder="(11) 99999-9999"
+              value={form.phone}
               onChange={handleChange}
               className={formInputClass}
+              maxLength={15}
             />
           </div>
         </div>

@@ -47,6 +47,41 @@ export function maskCnpjInput(value: string): string {
   return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
 }
 
+/** Apenas dígitos do telefone (entrada colada com máscara ou não). */
+export function normalizePhoneDigits(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+/**
+ * Máscara progressiva para telefone BR no campo:
+ * (XX) XXXXX-XXXX (celular, 9 após o DDD) ou (XX) XXXX-XXXX (fixo, até 8 dígitos locais).
+ */
+export function maskPhoneInput(value: string): string {
+  const raw = normalizePhoneDigits(value);
+  if (raw.length === 0) return "";
+  if (raw.length <= 2) return `(${raw}`;
+
+  const ddd = raw.slice(0, 2);
+  let subscriber = raw.slice(2);
+  const isMobile = subscriber[0] === "9";
+  if (isMobile) {
+    subscriber = subscriber.slice(0, 9);
+  } else {
+    subscriber = subscriber.slice(0, 8);
+  }
+
+  if (isMobile) {
+    if (subscriber.length <= 5) {
+      return `(${ddd}) ${subscriber}`;
+    }
+    return `(${ddd}) ${subscriber.slice(0, 5)}-${subscriber.slice(5)}`;
+  }
+  if (subscriber.length <= 4) {
+    return `(${ddd}) ${subscriber}`;
+  }
+  return `(${ddd}) ${subscriber.slice(0, 4)}-${subscriber.slice(4)}`;
+}
+
 /** Valida CNPJ brasileiro (14 dígitos + dígitos verificadores). */
 export function isValidCnpj(cnpj: string): boolean {
   const digits = normalizeCnpj(cnpj);

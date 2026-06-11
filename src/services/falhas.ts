@@ -101,6 +101,22 @@ export async function createFalha(
   return data;
 }
 
-export async function resolveFalha(id: number): Promise<void> {
-  await api.patch(`${FALHAS_PATH}/${id}/resolver`, null);
+/**
+ * PATCH /api/falhas/{id}/resolver — sem body.
+ * Remove o `Content-Type: application/json` padrão do cliente para não enviar JSON vazio
+ * (evita preflight/CORS desnecessário no Spring). Resposta: falha atualizada.
+ */
+export async function resolveFalha(
+  id: number
+): Promise<FalhaMaquinaResponse> {
+  const { data } = await api.patch<FalhaMaquinaResponse>(
+    `${FALHAS_PATH}/${id}/resolver`,
+    undefined,
+    {
+      headers: {
+        "Content-Type": false,
+      },
+    }
+  );
+  return data;
 }

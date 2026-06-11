@@ -127,11 +127,30 @@ describe("resolveFalha", () => {
     vi.restoreAllMocks();
   });
 
-  it("PATCH /api/falhas/:id/resolver sem body (mock)", async () => {
-    const patchSpy = vi.spyOn(api, "patch").mockResolvedValueOnce({ data: null });
+  it("PATCH /api/falhas/:id/resolver sem body nem Content-Type JSON (mock)", async () => {
+    const resolved = {
+      id: 7,
+      descricao: "x",
+      severidade: "MEDIA" as const,
+      status: "RESOLVIDA" as const,
+      dataAbertura: "2026-01-01T10:00:00Z",
+      dataResolucao: "2026-01-02T15:00:00Z",
+      maquinaId: 1,
+      maquinaNome: "M1",
+    };
+    const patchSpy = vi
+      .spyOn(api, "patch")
+      .mockResolvedValueOnce({ data: resolved });
 
-    await resolveFalha(7);
+    const result = await resolveFalha(7);
 
-    expect(patchSpy).toHaveBeenCalledWith("/api/falhas/7/resolver", null);
+    expect(patchSpy).toHaveBeenCalledWith(
+      "/api/falhas/7/resolver",
+      undefined,
+      expect.objectContaining({
+        headers: expect.objectContaining({ "Content-Type": false }),
+      })
+    );
+    expect(result).toEqual(resolved);
   });
 });

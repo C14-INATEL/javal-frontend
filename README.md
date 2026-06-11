@@ -132,7 +132,7 @@ O pipeline está definido no `Jenkinsfile` na raiz do projeto e é executado a c
 | Checkout SCM | Clona o repositório |
 | Instalar dependências | `npm ci` |
 | ESLint | Verifica qualidade do código |
-| Testes (Vitest) | Roda os 43 testes unitários e publica relatório |
+| Testes (Vitest) | Roda os 44 testes unitários e publica relatório |
 | Build (TypeScript + Vite) | Compila e gera o `/dist` |
 | Build Docker | Gera a imagem `javal-frontend:prod` |
 
@@ -214,9 +214,9 @@ Uma funcionalidade era considerada pronta quando:
 
 | Métrica | Valor |
 |---|---|
-| Pull Requests mergeados | 17 |
-| Commits | 40+ |
-| Testes unitários | 43 (8 suítes) |
+| Pull Requests mergeados | 19 |
+| Commits | 50+ |
+| Testes unitários | 44 (8 suítes) |
 | Stages no pipeline CI/CD | 6 |
 | Histórias de usuário entregues | 5 de 5 |
 

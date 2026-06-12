@@ -170,7 +170,11 @@ javal-frontend/
 
 | Nome | GitHub | Contribuição principal |
 |---|---|---|
+|  Ana Júlia | [@AnaJuliaP](https://github.com/AnaJuliaP) |  Desenvolvedora backend e líder do grupo |
+| João Vítor | [@JoaoVACD](https://github.com/JoaoVACD) | Desenvolvedor backend |
 | Leticia Luane Moraes | [@LeticialMoraes](https://github.com/LeticialMoraes) | Desenvolvimento completo do frontend, pipeline Jenkins, infraestrutura Docker |
+| Pettrius | [@Pettrius](https://github.com/Pettrius) | Desenvolvedor backend e responsável pela documentação do Backend |
+| Vinícius | [@ViniciusPereiraCardoso](https://github.com/ViniciusPereiraCardoso) | Desenvolvedor backend |
 
 ---
 
@@ -516,7 +520,7 @@ A IA foi utilizada de forma interativa durante sessões de desenvolvimento, prin
 - Arquitetura de componentes e estrutura de pastas
 - Lógica de negócio das chamadas de API (`src/services/`)
 - Definição de quais testes eram relevantes ao domínio
-- Configuração do `nginx.conf` e do proxy de desenvolvimento
+- Configuração do proxy de desenvolvimento
 - Decisão sobre as tecnologias utilizadas no projeto
 
 ---

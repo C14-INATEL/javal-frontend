@@ -83,15 +83,7 @@ npm run test
 npm run test:watch
 ```
 
-O pipeline Jenkins gera automaticamente um relatório de testes em [`test-results.xml`](test-results.xml) e o publica na interface do Jenkins após cada build.
-
-No **CI/CD**, o Jenkins gera o relatório em [`test-results.xml`](test-results.xml) (JUnit) após o stage de testes; o plugin **JUnit** publica os resultados na interface. As capturas correspondentes estão na secção **CI/CD — Pipeline Jenkins** mais abaixo.
-
-### Captura — testes a verde no Jenkins
-
-O print abaixo serve apenas como **evidência visual** de que o stage de testes concluiu com sucesso; o relatório estruturado continua a ser o `test-results.xml`.
-
-![Stage de testes Vitest concluído com sucesso no Jenkins](docs/images/testes.png)
+O pipeline Jenkins gera automaticamente um relatório de testes em `test-results.xml` e o publica na interface do Jenkins após cada build.
 
 ---
 
@@ -129,25 +121,9 @@ docker compose build --build-arg VITE_API_BASE_URL=https://api.exemplo.com front
 
 ---
 
-## 🔁 CI/CD — Pipeline Jenkins
-
-Este trecho documenta a **configuração** e as **evidências de execução** da pipeline de CI/CD do projeto **JAVAL Frontend**.
+## 🔁 CI/CD — Jenkins
 
 O pipeline está definido no `Jenkinsfile` na raiz do projeto e é executado a cada push no repositório.
-
-### Ferramenta utilizada
-
-A pipeline foi implementada com **Jenkins**, executando localmente via **Docker** (`Dockerfile.jenkins` + serviço `jenkins` no `docker-compose.yml`).
-
-### O que a pipeline executa
-
-| Etapa | Responsável | Descrição |
-|-------|-------------|-----------|
-| Instalar dependências | Leticia Luane Moraes | Instalação com `npm ci` |
-| ESLint | Leticia Luane Moraes | Verificação de qualidade com `npm run lint` (em **paralelo** com os testes) |
-| Testes (Vitest) | Leticia Luane Moraes | Testes unitários com `npm run test`; publicação do relatório JUnit com `junit 'test-results.xml'` |
-| Build (TypeScript + Vite) | Leticia Luane Moraes | Compilação e bundle de produção com `npm run build` (saída em `/dist`) |
-| Build Docker | Leticia Luane Moraes | Imagem `javal-frontend:prod` com `docker build -t javal-frontend:prod .` |
 
 ### Stages do pipeline
 
@@ -160,61 +136,12 @@ A pipeline foi implementada com **Jenkins**, executando localmente via **Docker*
 | Build (TypeScript + Vite) | Compila e gera o `/dist` |
 | Build Docker | Gera a imagem `javal-frontend:prod` |
 
-O estágio de testes publica resultados no Jenkins via **plugin JUnit** a partir do arquivo [`test-results.xml`](test-results.xml). Os blocos `post` do `Jenkinsfile` exibem mensagens de **sucesso** ou **falha** no console ao final de cada estágio relevante.
-
-### Configuração
-
-- **Repositório:** `https://github.com/C14-INATEL/javal-frontend.git`
-- **Branch:** `main`
-- **Script Path:** `Jenkinsfile`
-- **Agente Jenkins:** imagem customizada (`Dockerfile.jenkins`) com **Node.js 20**, **Docker CLI** e plugins de pipeline; a imagem base do Jenkins inclui **JDK 21** (LTS)
-
-### Como reproduzir localmente
-
-1. Na raiz do projeto, subir o Jenkins (e dependências) com Docker Compose:
-   ```bash
-   docker compose build
-   docker compose up -d
-   ```
-2. Acessar **`http://localhost:9080`** (mapeamento `9080 → 8080` no container).
-3. Criar um item do tipo **Pipeline**.
-4. Em **Pipeline script from SCM**, apontar para o repositório e branch acima e definir **Script Path** como `Jenkinsfile`.
-5. Executar **Build Now** (ou acionar por webhook, conforme a sua configuração).
-
 ### Como configurar o job
 
 1. Acesse **http://localhost:9080**
 2. Crie um job **Pipeline → Pipeline script from SCM**
 3. Aponte para este repositório
 4. **Script Path**: `Jenkinsfile`
-
-### Evidências de execução
-
-#### Configuração da pipeline (SCM)
-
-A pipeline está configurada para obter o código do repositório **C14-INATEL/javal-frontend**, branch **`main`**, lendo o **`Jenkinsfile`** versionado no projeto.
-
-![Configuração SCM — Pipeline from SCM](docs/images/configurações.png)
-
-#### Stage View — stages concluídos com sucesso
-
-Visão geral da execução: dependências, qualidade (ESLint e testes em paralelo), build e imagem Docker finalizados com sucesso.
-
-![Jenkins — Stage View da pipeline](docs/images/pipeline.png)
-
-#### Console Output — finalização da pipeline
-
-Trecho do log de console mostrando o encerramento da build (incluindo resumo `post` da pipeline).
-
-![Jenkins — Console Output](docs/images/console.png)
-
-#### Resultado dos testes e relatório JUnit
-
-O relatório consolidado apresentado no Jenkins é gerado a partir do **`test-results.xml`** (Vitest em formato JUnit). A captura abaixo serve como **evidência visual** de que os testes passaram na interface; o artefato usado pelo CI e para histórico continua sendo o arquivo **`test-results.xml`** na raiz após o stage.
-
-![Jenkins — resultados de teste (JUnit / Vitest)](docs/images/testes.png)
-
-> Imagens em [`docs/images/`](docs/images/).
 
 ---
 

@@ -170,7 +170,11 @@ javal-frontend/
 
 | Nome | GitHub | Contribuição principal |
 |---|---|---|
+|  Ana Júlia | [@AnaJuliaP](https://github.com/AnaJuliaP) |  Desenvolvedora backend e líder do grupo |
+| João Vítor | [@JoaoVACD](https://github.com/JoaoVACD) | Desenvolvedor backend |
 | Leticia Luane Moraes | [@LeticialMoraes](https://github.com/LeticialMoraes) | Desenvolvimento completo do frontend, pipeline Jenkins, infraestrutura Docker |
+| Pettrius | [@Pettrius](https://github.com/Pettrius) | Desenvolvedor backend e responsável pela documentação do Backend |
+| Vinícius | [@ViniciusPereiraCardoso](https://github.com/ViniciusPereiraCardoso) | Desenvolvedor backend |
 
 ---
 

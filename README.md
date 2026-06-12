@@ -520,7 +520,7 @@ A IA foi utilizada de forma interativa durante sessões de desenvolvimento, prin
 - Arquitetura de componentes e estrutura de pastas
 - Lógica de negócio das chamadas de API (`src/services/`)
 - Definição de quais testes eram relevantes ao domínio
-- Configuração do `nginx.conf` e do proxy de desenvolvimento
+- Configuração do proxy de desenvolvimento
 - Decisão sobre as tecnologias utilizadas no projeto
 
 ---
